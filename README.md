@@ -664,3 +664,457 @@ const Register = () => {
 };
 export default Register;
 ```
+
+## Step 20 React-Hook-form
+
+http://react-hook-form.com
+
+```bash
+npm install react-hook-form
+```
+
+## Step 21 Create Register1.jsx
+
+/pages/auth/Register1.jsx
+
+```js
+import { useState } from "react";
+import axios from "axios";
+import createAlert  from "../../utils/createAlert";
+
+const Register1 = () => {
+  // Javascript
+  const obj = {
+    email: "",
+    firstname: "",
+    lastname: "",
+    password: "",
+    confirmPassword: "",
+  }
+  const [value,setValue] = useState(obj)
+  const hdlOnChange = (e) =>{
+    // code body
+    setValue({
+      ...value,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const hdlSubmit = async(e) =>{
+    e.preventDefault()
+    try {
+      const res = await axios.post("http://localhost:9999/api/register",value)
+      console.log(res)
+      createAlert("success","Register Success")
+    } catch (error) {
+      createAlert("info",error.response.data.message)
+      console.log(error.response.data.message)
+    }
+  }
+
+  return (
+    <div className="flex w-full h-full justify-end">
+      <div className="w-64 border p-4 rounded-md">
+        <h1 className="text-xl font-bold text-center">Register1</h1>
+
+        {/* form */}
+        <form onSubmit={hdlSubmit}>
+          <div className="flex flex-col gap-2 py-4">
+            <input 
+            placeholder="Email"
+            type="text"
+            name="email"
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            onChange = {hdlOnChange}
+            />
+            
+            <input 
+            placeholder="Firstname"
+            type="text"
+            name="firstname"
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            onChange = {hdlOnChange}
+            />
+            <input 
+            placeholder="Lastname"
+            type="text"
+            name="lastname"
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            onChange = {hdlOnChange}
+            />
+            <input 
+            placeholder="Password"
+            type="text"
+            name="password"
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            onChange = {hdlOnChange}
+            />
+            <input 
+            placeholder="Confirm Password"
+            type="text"
+            name="confirmPassword"
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            onChange = {hdlOnChange}
+            />
+          </div>
+          <div className="flex justify-center">
+            <button className="bg-green-600 text-white px-2 py-1 rounded-md hover:cursor-pointer">Register1</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+export default Register1;
+```
+
+update AppRoutes.jsx
+
+### AppRoutes.jsx
+
+```js
+import { Outlet, Route, Routes } from "react-router"
+import Layout from "../layouts/Layout"
+import Home from "../pages/Home"
+import Login from "../pages/auth/Login"
+import Register from "../pages/auth/Register"
+import Manage from "../pages/admin/Manage"
+import Dashboard from "../pages/admin/Dashboard"
+import HomeUser from "../pages/user/HomeUser"
+import NotFound from "../pages/NotFound"
+import Register1 from "../pages/auth/Register1"
+
+const AppRoutes = () => {
+  return (
+    <>
+     <Routes>
+        {/* Public */}
+        <Route path ="/" element={<Layout/>}>
+            <Route index element = {<h1><Home/></h1>}/> 
+            <Route path = "about" element = {<h1><Login/></h1>}/> 
+            <Route path = "register" element = {<h1><Register1/></h1>}/>
+            <Route path = "login" element = {<h1><Login/></h1>}/> 
+        </Route>
+        
+
+        {/* Private [USER] */}
+        <Route path = "user" element={<Layout/>}>
+            <Route index element = {<h1><HomeUser/></h1>} /> 
+        </Route>
+
+        {/* Private [ADMIN] */}
+        <Route path ="admin" element={<Layout/>}>
+            <Route index element = {<h1><Dashboard/></h1>}/> 
+            <Route path = "manage" element = {<h1><Manage/></h1>}/> 
+        </Route>
+
+        <Route path = "*" element = {<h1><NotFound/></h1>}/> 
+     </Routes>  
+    </>
+  )
+}
+export default AppRoutes
+```
+
+## Step 21 Update Register1.jsx
+
+/auth/Register.jsx
+
+### Register.jsx
+
+```js
+import { useState } from "react";
+import axios from "axios";
+import createAlert  from "../../utils/createAlert";
+import { useForm } from "react-hook-form"
+
+const Register1 = () => {
+  // Javascript
+
+  const {register, handleSubmit} = useForm();
+
+  const hdlSubmit = async(value) =>{
+
+    try {
+      const res = await axios.post("http://localhost:9999/api/register",value)
+      console.log(res)
+
+      createAlert("success","Register Success")
+    } catch (error) {
+      createAlert("info",error.response.data.message)
+      console.log(error.response.data.message)
+    }
+  }
+
+  return (
+    <div className="flex w-full h-full justify-end">
+      <div className="w-64 border p-4 rounded-md">
+        <h1 className="text-xl font-bold text-center">Register1</h1>
+
+        {/* form */}
+        <form onSubmit={handleSubmit(hdlSubmit)}>
+          <div className="flex flex-col gap-2 py-4">
+            <input 
+            placeholder="Email"
+            type="text"
+            {...register("email")}
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            />
+            
+            <input 
+            placeholder="Firstname"
+            type="text"
+            {...register("firstname")}
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            />
+            <input 
+            placeholder="Lastname"
+            type="text"
+            {...register("lastname")}
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            />
+            <input 
+            placeholder="Password"
+            type="text"
+            {...register("password")}
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            />
+            <input 
+            placeholder="Confirm Password"
+            type="text"
+            {...register("confirmPassword")}
+            className="border w-full border-blue-800 rounded-md p-1 px-4"
+            />
+          </div>
+          <div className="flex justify-center">
+            <button className="bg-green-600 text-white px-2 py-1 rounded-md hover:cursor-pointer">Register1</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+export default Register1;
+```
+
+## Step 22 Create folder form
+
+create FormInput.jsx
+
+/components/form/FormInput.jsx
+
+### FormInput.jsx
+```js
+const FormInput = () => {
+  return (
+    <input 
+    placeholder="Email"
+    type="text"
+    {...register("email")}
+    className="border w-full border-blue-800 rounded-md p-1 px-4"
+    />
+  )
+}
+export default FormInput
+```
+
+Update Register1.jsx
+เปลี่ยนมาใช้ FormInput
+### Register1.jsx
+```js
+import { useState } from "react";
+import axios from "axios";
+import createAlert  from "../../utils/createAlert";
+import { useForm } from "react-hook-form"
+import FormInput from "../../components/form/FormInput";
+
+const Register1 = () => {
+  // Javascript
+
+  const {register, handleSubmit} = useForm();
+
+  const hdlSubmit = async(value) =>{
+
+    try {
+      const res = await axios.post("http://localhost:9999/api/register",value)
+      console.log(res)
+
+      createAlert("success","Register Success")
+    } catch (error) {
+      createAlert("info",error.response.data.message)
+      console.log(error.response.data.message)
+    }
+  }
+
+  return (
+    <div className="flex w-full h-full justify-end">
+      <div className="w-64 border p-4 rounded-md">
+        <h1 className="text-xl font-bold text-center">Register1</h1>
+
+        {/* form */}
+        <form onSubmit={handleSubmit(hdlSubmit)}>
+          <div className="flex flex-col gap-2 py-4">
+            
+          <FormInput register={register} name="email"/>
+          <FormInput register={register} name="firstname"/>
+          <FormInput register={register} name="lastname"/>
+          <FormInput register={register} name="password"/>
+          <FormInput register={register} name="confirmPassword"/>
+
+          </div>
+          <div className="flex justify-center">
+            <button className="bg-green-600 text-white px-2 py-1 rounded-md hover:cursor-pointer">Register1</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+export default Register1;
+```
+
+## Step 23 Create Buttons.jsx
+
+```js
+const Buttons = ({isSubmitting,label}) => {
+  return (
+    <button className="bg-green-600 text-white px-2 py-1 rounded-md hover:cursor-pointer">
+    {
+        isSubmitting
+        ? <p>Loading ...</p>
+        : <p>{label}</p>
+    }
+    </button>
+  )
+}
+export default Buttons
+```
+
+## Step 24 Update Register1.jsx
+
+### Register.jsx
+```js
+import { useState } from "react";
+import axios from "axios";
+import createAlert  from "../../utils/createAlert";
+import { useForm } from "react-hook-form"
+import FormInput from "../../components/form/FormInput";
+import Buttons from "../../components/form/Buttons";
+
+const Register1 = () => {
+  // Javascript
+
+  const { register, handleSubmit, formState } = useForm();
+  const { isSubmitting } = formState;
+
+  console.log(isSubmitting);
+  const hdlSubmit = async(value) =>{
+    // Delay
+    await new Promise((resolve)=> setTimeout(resolve,2000))
+
+    try {
+      const res = await axios.post("http://localhost:9999/api/register",value)
+      console.log(res)
+
+      createAlert("success","Register Success")
+    } catch (error) {
+      createAlert("info",error.response.data.message)
+      console.log(error.response.data.message)
+    }
+  }
+
+  return (
+    <div className="flex w-full h-full justify-end">
+      <div className="w-64 border p-4 rounded-md">
+        <h1 className="text-xl font-bold text-center">Register1</h1>
+
+        {/* form */}
+        <form onSubmit={handleSubmit(hdlSubmit)}>
+          <div className="flex flex-col gap-2 py-4">
+
+          <FormInput register={register} name="email"/>
+          <FormInput register={register} name="firstname"/>
+          <FormInput register={register} name="lastname"/>
+          <FormInput register={register} name="password"/>
+          <FormInput register={register} name="confirmPassword"/>
+
+          </div>
+          <div className="flex justify-center">
+            <Buttons isSubmitting={isSubmitting} label="Register"/>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+export default Register1;
+```
+
+## Step 25 Install lucide
+
+```bash
+npm install lucide-react
+```
+
+## Step 26 Update Buttons.jsx
+/component/form/Buttons.jsx
+
+### Buttons.jsx
+```js
+import { Loader } from "lucide-react"
+
+const Buttons = ({isSubmitting,label}) => {
+  return (
+    <button className="bg-green-600 text-white px-2 py-1 rounded-md hover:cursor-pointer">
+    {
+        isSubmitting
+        ? <div className="flex gap-2">
+            <Loader className="animate-spin"/>
+           <p>Loading ...</p> 
+        </div>
+        : <p>{label}</p>
+    }
+    </button>
+  )
+}
+export default Buttons
+```
+
+## Step 27 Install @hookform/resolvers & Zod
+
+```bash
+npm install @hookform/resolvers
+npm i zod
+```
+
+## Step 28 Create file validators.jsx
+
+/utils/validators.jsx
+
+copy exports.registerSchema from SERVER --> middlewares/validator.js and edit
+### validator.jsx
+
+```js
+import { z } from "zod"
+
+export const registerSchema = z.object({
+    email: z.string().email("Email is invalid"),
+    firstname: z.string().min(3,"Firstname must be more than 3 character"),
+    lastname: z.string().min(3,"Lastname must be more than 3 chareacter"),
+    password: z.string().min(6, "Password must be more than 6 character"),
+    confirmPassword: z.string().min(6, "Confirm Password must be more than 6 character")
+}).refine((data)=>data.password === data.confirmPassword,{
+    message:"Confirm Password not match",
+    path:["confirmPassword"]
+})
+```
+
+## Step 29 Update Register1.jsx
+
+/pages/auth/Register1.jsx
+
+```js
+
+```
+
+## Step 30

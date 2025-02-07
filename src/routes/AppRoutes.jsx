@@ -7,6 +7,7 @@ import Manage from "../pages/admin/Manage"
 import Dashboard from "../pages/admin/Dashboard"
 import HomeUser from "../pages/user/HomeUser"
 import NotFound from "../pages/NotFound"
+import Register1 from "../pages/auth/Register1"
 
 const AppRoutes = () => {
   return (
@@ -16,7 +17,7 @@ const AppRoutes = () => {
         <Route path ="/" element={<Layout/>}>
             <Route index element = {<h1><Home/></h1>}/> 
             <Route path = "about" element = {<h1><Login/></h1>}/> 
-            <Route path = "register" element = {<h1><Register/></h1>}/>
+            <Route path = "register" element = {<h1><Register1/></h1>}/>
             <Route path = "login" element = {<h1><Login/></h1>}/> 
         </Route>
         
