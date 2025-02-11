@@ -10,3 +10,8 @@ export const registerSchema = z.object({
     message:"Confirm Password not match",
     path:["confirmPassword"]
 })
+
+export const loginSchema = z.object({
+    email: z.string().email("Email is error"),
+    password: z.string().min(6, "Password must be more than 6 character"),
+})
